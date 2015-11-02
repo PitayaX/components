@@ -2,9 +2,10 @@
   "name": "pitaya-components",
   "version": "0.1.0",
   "description": "react components for projects",
-  "main": "./src/index.js",
+  "main": "./lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src --out-dir lib --stage 0 && node build",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,33 @@
   "bugs": {
     "url": "https://github.com/PitayaX/components/issues"
   },
-  "homepage": "https://github.com/PitayaX/components#readme"
+  "homepage": "https://github.com/PitayaX/components#readme",
+  "dependencies": {
+    "classnames": "^2.2.0",
+    "dom-helpers": "^2.4.0",
+    "lodash": "^3.10.1",
+    "react-overlays": "^0.5.0",
+    "responsive_waterfall": "^1.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=0.14.0",
+    "react-dom": "^0.14.0",
+    "react-addons-shallow-compare": "^0.14.0",
+    "react-addons-transition-group": "^0.14.0",
+    "react-addons-update": "^0.14.0"
+  },
+  "devDependencies": {
+    "autoprefixer-loader": "^3.1.0",
+    "babel": "^5.8.29",
+    "babel-core": "^5.8.33",
+    "babel-loader": "^5.3.3",
+    "css-loader": "^0.21.0",
+    "extract-text-webpack-plugin": "^0.8.2",
+    "glob": "^5.0.15",
+    "gulp": "^3.9.0",
+    "less": "^2.5.3",
+    "less-loader": "^2.2.1",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.2"
+  }
 }

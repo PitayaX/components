@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import update from 'react-addons-update'
 import cNames from 'classnames'
-import './scrollpanel.less'
 
 const noop = () => {}
 const range = (min, max) => (val) => {
@@ -50,6 +49,7 @@ export default class ScrollPanel extends Component {
 
   componentDidUpdate (prevProps, prevState) {
     if (prevProps.children !== this.props.children) {
+      this.setState(this._constructScrollYUpdateState(0, 0))
       this._refreshDOMValue()
     }
 
@@ -127,11 +127,11 @@ export default class ScrollPanel extends Component {
   //
 
   _refreshDOMValue () {
-    this._contentHeight = this._getContentHeight()
-    this._panelHeight = this._getPanelHeight()
+    // this._contentHeight = this._getContentHeight()
+    // this._panelHeight = this._getPanelHeight()
   }
 
-  _getContentHeight () {
+  get _contentHeight () {
     const contentStyles = window.getComputedStyle(this.refs.content)
     const panelStyles = window.getComputedStyle(this.refs.panel)
 
@@ -140,7 +140,7 @@ export default class ScrollPanel extends Component {
      parseInt(panelStyles['padding-top'], 10) + parseInt(panelStyles['padding-bottom'], 10)
   }
 
-  _getPanelHeight () {
+  get _panelHeight () {
     return this.refs.panel.clientHeight
   }
 
@@ -173,19 +173,25 @@ export default class ScrollPanel extends Component {
 
   _handleWheel (e) {
     // need scrollY
-    if (e.deltaY && this._needScrollY()) {
-      e.preventDefault()
+    if (e.deltaY) {
+      if (this._needScrollY()) {
+        e.preventDefault()
 
-      this.refs.scrollY.classList.add('hover')
-      if (this._ltr) clearTimeout(this._ltr)
-      this._ltr = setTimeout(() => {
-        this.refs.scrollY.classList.remove('hover')
-      }, 500)
+        this.refs.scrollY.classList.add('hover')
+        if (this._ltr) clearTimeout(this._ltr)
+        this._ltr = setTimeout(() => {
+          this.refs.scrollY.classList.remove('hover')
+        }, 500)
 
-      let delta = e.deltaY
-      if (navigator.platform !== 'MacIntel') delta = e.deltaY > 0 ? 100 : -100
+        let delta = e.deltaY
+        if (navigator.platform !== 'MacIntel') delta = e.deltaY > 0 ? 100 : -100
 
-      this._scrollByContent(delta)
+        this._scrollByContent(delta)
+      }
+      else {
+        // make sure scroll to top if need not scroll any more
+        this.setState(this._constructScrollYUpdateState(0, 0))
+      }
     }
   }
 

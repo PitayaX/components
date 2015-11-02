@@ -1,4 +1,6 @@
 import React, { Component, PropTypes as T } from 'react'
+import ReactDOM from 'react-dom'
+import contains from 'dom-helpers/query/contains'
 import Animate from '../Animate/Animate'
 
 export default class Dropdown extends Component {
@@ -6,12 +8,18 @@ export default class Dropdown extends Component {
   static propTypes = {
     open: T.bool,
     onHide: T.func,
-    children: T.any
+    animateName: T.string,
+    leaveTimeout: T.number,
+    enterTimeout: T.number,
+    transitionTimeout: T.number,
+    children: T.any,
+    notHideIfClickEntry: T.bool
   }
 
   static defaultProps = {
     open: false,
-    onHide: () => {}
+    onHide: () => {},
+    notHideIfClickEntry: false
   }
 
   componentDidMount () {
@@ -24,22 +32,31 @@ export default class Dropdown extends Component {
   }
 
   render () {
-    return (
-      <Animate name='slideDown'>
-        {this.props.open ? (
-          <ul ref='list' {...this.props}>
-            {React.Children.map(this.props.children, (child) => {
-              if (child.type === 'option') {
-                return <li {...child.props}>{child.props.children}</li>
-              }
-            })}
-          </ul>
-        ): null}
-      </Animate>
-    )
+    const child = this.props.open ? this.props.children : null
+    const { animateName, enterTimeout, leaveTimeout, transitionTimeout } = this.props
+
+    if (animateName) {
+      return (
+        <Animate name={animateName}
+          enterTimeout={enterTimeout || transitionTimeout}
+          leaveTimeout={leaveTimeout || transitionTimeout}>
+          {child}
+        </Animate>
+      )
+    }
+    else return child
   }
 
-  _handleClick () {
-    if (this.props.open) this.props.onHide()
+  _handleClick (e) {
+    if (this.props.open) {
+      const dropdown = ReactDOM.findDOMNode(this)
+      
+      if (this.props.notHideIfClickEntry &&
+        contains(dropdown, e.target)) {
+        return
+      }
+
+      this.props.onHide()
+    }
   }
 }
