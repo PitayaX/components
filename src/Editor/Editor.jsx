@@ -16,6 +16,11 @@ class Editor extends Component {
     onError: noop
   }
 
+  get value () {
+    // return this.refs.editor.value
+    return this.$editor && this.$editor.getContent()
+  }
+
   componentDidMount () {
     if (!vendorLoaded) this.loadVendorScript(this.configEditor)
     else {
