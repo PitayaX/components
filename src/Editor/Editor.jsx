@@ -18,13 +18,14 @@ class Editor extends Component {
 
   get value () {
     // return this.refs.editor.value
-    return this.$editor && this.$editor.getContent()
+    // return this.$editor && this.$editor.getContent()
+    // return this._value
+    this.refs.editor.value
   }
 
   componentDidMount () {
     if (!vendorLoaded) this.loadVendorScript(this.configEditor)
     else {
-      this.$editor = window.jQuery(this.refs.editor)
       this.initEditor()
     }
   }
@@ -36,13 +37,15 @@ class Editor extends Component {
   }
 
   initEditor () {
+    this.$editor = window.jQuery(this.refs.editor)
+
     if (vendorLoaded && this.$editor != null) {
       if (this.$editor.data('markdown')) {
         this.$editor.data('markdown').showEditor()
         return
       }
 
-      this.$editor.markdown()
+      this.configEditor()
     }
   }
 
@@ -57,17 +60,21 @@ class Editor extends Component {
     ], () => {
       newScript('/assets/bootstrap-markdown.js', () => {
         vendorLoaded = true
-        callback.bind(this)(window.jQuery(this.refs.editor))
+        this.$editor = window.jQuery(this.refs.editor)
+        callback.bind(this)()
       })
     }, (isSucceed) => {
       if (!isSucceed) this.props.onError()
     })
   }
 
-  configEditor ($editor) {
+  configEditor () {
     const { props } = this
-    $editor.markdown({
-      onShow: props.onLoad
+    this.$editor.markdown({
+      onShow: props.onLoad,
+      onChange (e) {
+        // this._value = e.getContent()
+      }
     })
   }
 }
