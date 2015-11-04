@@ -20,7 +20,7 @@ class Editor extends Component {
     // return this.refs.editor.value
     // return this.$editor && this.$editor.getContent()
     // return this._value
-    this.refs.editor.value
+    return this.refs.editor.value
   }
 
   componentDidMount () {
