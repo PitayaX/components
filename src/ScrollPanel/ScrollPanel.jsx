@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import update from 'react-addons-update'
 import cNames from 'classnames'
+import './scrollpanel.less'
 
 const noop = () => {}
 const range = (min, max) => (val) => {
@@ -15,13 +16,15 @@ export default class ScrollPanel extends Component {
   static propTypes = {
     className: PropTypes.string,
     children: PropTypes.any,
+    scrollTopAfterUpdate: PropTypes.bool,
     onScrollTop: PropTypes.func,
     onScrollBottom: PropTypes.func
   }
 
   static defaultProps = {
     onScrollTop: noop,
-    onScrollBottom: noop
+    onScrollBottom: noop,
+    scrollTopAfterUpdate: true
   }
 
   constructor (props) {
@@ -49,7 +52,9 @@ export default class ScrollPanel extends Component {
 
   componentDidUpdate (prevProps, prevState) {
     if (prevProps.children !== this.props.children) {
-      this.setState(this._constructScrollYUpdateState(0, 0))
+      if (this.props.scrollTopAfterUpdate) {
+        this.setState(this._constructScrollYUpdateState(0, 0))
+      }
       this._refreshDOMValue()
     }
 
@@ -145,7 +150,8 @@ export default class ScrollPanel extends Component {
   }
 
   _getScrollYHeight () {
-    return this._panelHeight * this._panelHeight / this._contentHeight
+    const height = this._panelHeight * this._panelHeight / this._contentHeight
+    return isNaN(height) ? 0 : height
   }
 
   _needScrollY () {
