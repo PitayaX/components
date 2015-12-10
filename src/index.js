@@ -10,4 +10,4 @@ export { default as ScrollPanel } from './ScrollPanel/ScrollPanel'
 export { default as Tooltip } from './Tooltip/Tooltip'
 export { default as Waterfall } from './Waterfall/Waterfall'
 
-require('./index.less')
+// require('./index.less')
